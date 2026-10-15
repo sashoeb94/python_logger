@@ -1,53 +1,33 @@
-import sys
-from app_logger import Logger
+"""What python_logger does, in four steps. Run with: python example.py"""
+from python_logger import Logger
 
-LOGGER = Logger(name="example_app", log_level="debug", send_alerts=False)
+
+# An error handler is your hook for alerts (email, Slack, ...). It runs whenever an exception is logged.
+def alert(traceback, exc_info):
+    print(">> ALERT:", traceback.format_exception_only(exc_info[0], exc_info[1])[-1].strip())
+
+
+# 1. Create a logger. It prints to stdout; messages below log_level are hidden.
+LOGGER = Logger(name="my_app", log_level="info", error_handler=alert)
+
+# 2. Log messages.
+LOGGER.debug("Hidden, because the level is info")
+LOGGER.info("App started")
+LOGGER.warning("Disk space is low")
+
+# 3. Log a caught exception: prints the stacktrace, then calls the error handler.
 try:
-    LOGGER.info("This is an info statement.")
-    LOGGER.debug("This is a debug statement with a value: %s" % str(123.456))
-except Exception as e:
-    LOGGER.error("Encountered an error in example_app")
+    1 / 0
+except ZeroDivisionError as e:
     LOGGER.exception(e)
 
-with Logger(name="second_example_app") as LOGGER:
-    try:
-        LOGGER.info("This is also an info statement")
-        LOGGER.debug(123456)
-        a = 0/0                                     # Will print the divide by zero error message
-    except Exception as e:
-        LOGGER.error("Encountered error second_example_app")
-        LOGGER.exception(e)
 
-def my_err_handler(traceback, exec_info):
-    """A custom function to handle the errors
-    This function receives two arguments, i.e. traceback and system exec info
-    """
-    print "Custom function invoked"
-    print "Formatted exception"
-    print traceback.format_exc()
-    print "System exec info"
-    print exec_info
-    exp_type, exp_value, exp_traceback = exec_info
-    print "String formatted exception"
-    print traceback.format_exception(exp_type, exp_value, exp_traceback)
-    print "End of custom function"
+# 4. Protect a function: any exception is logged and handled as in step 3,
+#    and the function returns exception_response instead of crashing.
+@LOGGER.protect_method(exception_response=0)
+def divide(a, b):
+    return a / b
 
-with Logger(name="CUSTOM_ERROR_HANDLER", send_alerts=True) as LOGGER:
-    try:
-        LOGGER.info("Custom error handling example")
-        LOGGER.debug("Will execute a function given by you in case of exception")
-        if not LOGGER.set_custom_error_handler(my_err_handler):
-            LOGGER.error("Unable to set custom error handler")
-            sys.exit(0)
-        LOGGER.debug("Divide by zero error")
-        a = 0 / 0  # Will print the divide by zero error message
-    except Exception as e:
-        LOGGER.error("Encountered error second_example_app")
-        LOGGER.exception(e)
 
-    try:
-        LOGGER.debug("Type error")
-        "2" + 2
-    except Exception as e:
-        LOGGER.error("Encountered error second_example_app")
-        LOGGER.exception(e)
+LOGGER.info("divide(10, 2) = %s" % divide(10, 2))
+LOGGER.info("divide(1, 0) = %s" % divide(1, 0))   # Logged and alerted, returns 0
