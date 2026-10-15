@@ -56,8 +56,9 @@ Use it to send alerts (email, Slack, Sentry, …) or anything else. If the handl
 # Development
 The project is managed with [uv](https://docs.astral.sh/uv/).
 ```bash
-uv sync         # creates .venv and installs the package plus the dev group (pytest)
+uv sync         # creates .venv and installs the package plus the dev group (pytest, ruff)
 uv run pytest
+uv run ruff check . && uv run ruff format --check .
 ```
 
 # Migrating from the Python 2 version

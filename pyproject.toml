@@ -12,11 +12,23 @@ requires-python = ">=3.13"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest"]
+dev = ["pytest", "ruff"]
 
 [tool.uv.build-backend]
 module-name = "python_logger"
 module-root = ""
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["*.md"]  # don't reformat README code blocks
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["UP031"]  # %-formatting is fine, and matches logging's own style
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B018"]  # `1 / 0` is the point
+"example.py" = ["B018"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
