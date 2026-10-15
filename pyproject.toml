@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python_logger"
+version = "1.0.0"
+description = "Generic library for Python logging and exception handling"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools]
+packages = ["python_logger"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
