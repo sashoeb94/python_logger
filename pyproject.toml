@@ -19,3 +19,4 @@ packages = ["python_logger"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]

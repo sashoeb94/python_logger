@@ -21,7 +21,8 @@ class Logger:
 
     def __init__(self, name, log_level=DEFAULT_LOG_LEVEL, log_format=DEFAULT_FORMAT, error_handler=None):
         """Initializes the logger"""
-        self._name = name
+        if error_handler is not None and not callable(error_handler):
+            raise TypeError("error_handler must be callable, got %r" % (error_handler,))
         self._error_handler = None
         self._logger = self._build_logger(name, self._get_log_level(log_level), log_format)
         self.debug = self._logger.debug
@@ -42,19 +43,19 @@ class Logger:
 
     @staticmethod
     def _get_log_level(log_level):
-        if isinstance(log_level, int):
+        if isinstance(log_level, int) and not isinstance(log_level, bool):
             return log_level
-        try:
+        if isinstance(log_level, str) and log_level.lower() in LOG_LEVELS:
             return LOG_LEVELS[log_level.lower()]
-        except KeyError:
-            raise ValueError("Unknown log level %r, expected one of %s" % (log_level, ", ".join(LOG_LEVELS))) from None
+        raise ValueError("Unknown log level %r, expected an int or one of %s" % (log_level, ", ".join(LOG_LEVELS)))
 
     @staticmethod
     def _build_logger(name, log_level, log_format):
-        """Builds a private (unregistered) logger writing to stdout"""
+        """Builds a private (unregistered) logger writing to stdout.
+        Only the logger has a level, so LOGGER.setLevel() later also changes what reaches stdout.
+        """
         logger = logging.Logger(name, log_level)
         handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(log_level)
         handler.setFormatter(logging.Formatter(log_format))
         logger.addHandler(handler)
         return logger
@@ -80,6 +81,8 @@ class Logger:
             return wrapper
         if method is None:
             return override_exception_return
+        if not callable(method):
+            raise TypeError("protect_method takes the function to wrap; pass exception_response by keyword")
         return override_exception_return(method)
 
     def exception(self, message):
