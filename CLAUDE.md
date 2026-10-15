@@ -13,14 +13,21 @@ uv sync                                                        # creates .venv, 
 uv run pytest                                                  # full suite (tests/)
 uv run pytest tests/test_logger.py::test_protect_method_bare   # single test
 uv run example.py                                              # usage demo; README points here
+uv run ruff check --fix . && uv run ruff format .              # fix lint and formatting in place, then re-stage
 uv run --python 3.13 pytest                                    # check the 3.13 floor (recreates .venv; `uv sync --python 3.14` to go back)
 ```
 
 The project is managed with uv and builds with the `uv_build` backend (flat layout, so `module-root = ""`). Dev tools go in `[dependency-groups]` (`uv add --dev ...`), not optional extras. `uv.lock` is committed; re-run `uv lock` after editing dependencies.
 
-There's no linter config. `example.py` is deliberately minimal: four numbered steps (create, log, `exception()` with an error handler, `protect_method`) that show what the library is for. Keep it that short; the README's API section is where the full feature list lives. It doubles as a smoke test and makes no network calls.
+Ruff is configured in `pyproject.toml` with a deliberately small rule set; `%`-formatting is allowed. `example.py` is deliberately minimal: four numbered steps (create, log, `exception()` with an error handler, `protect_method`) that show what the library is for. Keep it that short; the README's API section is where the full feature list lives. It doubles as a smoke test and makes no network calls.
 
 When the public API changes, update all three: `example.py`, the README (usage snippet, the API section, and the migration notes if the change breaks callers), and this file.
+
+## Committing
+
+- Never commit without the user's explicit approval, given for that commit.
+- Before asking for approval, stage the changes and run `/code-review` on the staged diff. Fix or report what it finds, then show the summary and a suggested commit message.
+- `.claude/settings.json` registers a PreToolUse hook (`.claude/hooks/pre-commit-checks.sh`) that runs `ruff check`, `ruff format --check` and `pytest` on the staged snapshot when Claude runs `git commit`, and blocks the commit if any fail. Because it checks the index, stage everything first; don't use `git commit -a` or `git commit <paths>`. Fix the cause; don't bypass the hook. It doesn't run for commits made outside Claude Code.
 
 ## History
 

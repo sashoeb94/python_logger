@@ -1,8 +1,9 @@
 """Generic class for Python logging and exception handling"""
-from functools import wraps
+
 import logging
 import sys
 import traceback
+from functools import wraps
 
 DEFAULT_FORMAT = "%(asctime)s : %(name)s : %(levelname)s : %(message)s"
 DEFAULT_LOG_LEVEL = "debug"
@@ -70,6 +71,7 @@ class Logger:
         If an exception is raised in the method, it is passed to exception() and exception_response is returned.
         Usable as @LOGGER.protect_method or @LOGGER.protect_method(exception_response=...).
         """
+
         def override_exception_return(protected_method):
             @wraps(protected_method)
             def wrapper(*args, **kwargs):
@@ -78,7 +80,9 @@ class Logger:
                 except Exception as e:
                     self.exception(e)
                     return exception_response
+
             return wrapper
+
         if method is None:
             return override_exception_return
         if not callable(method):

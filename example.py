@@ -1,4 +1,5 @@
 """What python_logger does, in four steps. Run with: python example.py"""
+
 from python_logger import Logger
 
 
@@ -30,4 +31,4 @@ def divide(a, b):
 
 
 LOGGER.info("divide(10, 2) = %s" % divide(10, 2))
-LOGGER.info("divide(1, 0) = %s" % divide(1, 0))   # Logged and alerted, returns 0
+LOGGER.info("divide(1, 0) = %s" % divide(1, 0))  # Logged and alerted, returns 0
