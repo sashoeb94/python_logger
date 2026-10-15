@@ -16,7 +16,7 @@ pytest tests/test_logger.py::test_protect_method_bare   # single test
 python example.py                                       # usage demo; README points here
 ```
 
-There's no linter config. `example.py` covers every public feature and doubles as a smoke test; it makes no network calls.
+There's no linter config. `example.py` is deliberately minimal: four numbered steps (create, log, `exception()` with an error handler, `protect_method`) that show what the library is for. Keep it that short; the README's API section is where the full feature list lives. It doubles as a smoke test and makes no network calls.
 
 When the public API changes, update all three: `example.py`, the README (usage snippet, the API section, and the migration notes if the change breaks callers), and this file.
 
