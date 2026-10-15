@@ -9,12 +9,14 @@ A small, generic Python 3 library for logging and exception handling: a `Logger`
 ## Commands
 
 ```bash
-python3 -m venv .venv && . .venv/bin/activate
-pip install -e '.[dev]'
-pytest                                                  # full suite (tests/)
-pytest tests/test_logger.py::test_protect_method_bare   # single test
-python example.py                                       # usage demo; README points here
+uv sync                                                        # creates .venv, installs package + dev group
+uv run pytest                                                  # full suite (tests/)
+uv run pytest tests/test_logger.py::test_protect_method_bare   # single test
+uv run example.py                                              # usage demo; README points here
+uv run --python 3.13 pytest                                    # check the 3.13 floor (recreates .venv; `uv sync --python 3.14` to go back)
 ```
+
+The project is managed with uv and builds with the `uv_build` backend (flat layout, so `module-root = ""`). Dev tools go in `[dependency-groups]` (`uv add --dev ...`), not optional extras. `uv.lock` is committed; re-run `uv lock` after editing dependencies.
 
 There's no linter config. `example.py` is deliberately minimal: four numbered steps (create, log, `exception()` with an error handler, `protect_method`) that show what the library is for. Keep it that short; the README's API section is where the full feature list lives. It doubles as a smoke test and makes no network calls.
 
