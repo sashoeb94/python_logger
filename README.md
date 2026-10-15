@@ -2,9 +2,11 @@
 Generic library for Python logging and exception handling. Requires Python 3.13+, no third-party dependencies.
 
 # Install
+The package isn't on PyPI. Add it to a uv project straight from GitHub:
 ```bash
-pip install -e .
+uv add git+https://github.com/sashoeb94/python_logger
 ```
+Or install it from a clone with `uv pip install -e .` (plain `pip install -e .` works too).
 
 # Usage
 ```python
@@ -22,7 +24,7 @@ def risky():
 risky()  # logs the stacktrace, calls on_error, returns None
 ```
 
-Find more example code in the example.py file (`python example.py`).
+Find more example code in the example.py file (`uv run example.py`).
 
 # API
 
@@ -52,9 +54,10 @@ An error handler is called as `handler(traceback, exc_info)`:
 Use it to send alerts (email, Slack, Sentry, …) or anything else. If the handler raises, that error is logged and the original exception isn't masked.
 
 # Development
+The project is managed with [uv](https://docs.astral.sh/uv/).
 ```bash
-pip install -e '.[dev]'
-pytest
+uv sync         # creates .venv and installs the package plus the dev group (pytest)
+uv run pytest
 ```
 
 # Migrating from the Python 2 version
